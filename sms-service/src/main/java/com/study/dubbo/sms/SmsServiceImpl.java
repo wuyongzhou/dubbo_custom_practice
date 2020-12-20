@@ -1,9 +1,12 @@
 package com.study.dubbo.sms;
 
+import com.study.dubbo.config.annotation.WRpcReference;
+import com.study.dubbo.config.annotation.WRpcService;
 import com.study.dubbo.sms.api.SmsService;
 import org.apache.dubbo.config.annotation.DubboService;
 
-@DubboService
+//@DubboService
+@WRpcService
 public class SmsServiceImpl implements SmsService {
 
     public Object send(String phone, String content) {

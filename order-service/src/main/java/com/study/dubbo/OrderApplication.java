@@ -1,5 +1,6 @@
 package com.study.dubbo;
 
+import com.study.dubbo.config.spring.annotation.EnableWRPC;
 import com.study.dubbo.order.api.OrderService;
 import org.apache.dubbo.config.spring.context.annotation.EnableDubbo;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -10,9 +11,9 @@ import org.springframework.context.annotation.PropertySource;
 @Configuration
 @ComponentScan("com.study.dubbo")
 @EnableDubbo(scanBasePackages = "com.study.dubbo")
-@PropertySource("classpath:/dubbo.properties")
-//@PropertySource("classpath:/trpc.properties")
-//@EnableTRPC
+//@PropertySource("classpath:/dubbo.properties")
+@PropertySource("classpath:/trpc.properties")
+@EnableWRPC
 public class OrderApplication {
     public static void main(String[] args) throws Exception {
         final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(OrderApplication.class);

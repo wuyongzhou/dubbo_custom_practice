@@ -8,7 +8,9 @@ import java.net.URI;
 public class Netty4Transporter implements Transporter {
     @Override
     public Server start(URI uri) {
-        return null;
+        Server server=new NettyServer();
+        server.start(uri);
+        return server;
     }
 
     @Override

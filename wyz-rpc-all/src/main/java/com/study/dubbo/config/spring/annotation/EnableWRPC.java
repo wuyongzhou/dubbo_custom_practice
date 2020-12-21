@@ -1,5 +1,6 @@
 package com.study.dubbo.config.spring.annotation;
 
+import com.study.dubbo.config.spring.WRPCConfiguration;
 import com.study.dubbo.config.spring.WRPCPostProcessor;
 import org.springframework.context.annotation.Import;
 
@@ -10,7 +11,7 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@Import({WRPCPostProcessor.class})
+@Import({WRPCPostProcessor.class, WRPCConfiguration.class})
 public @interface EnableWRPC {
 
 }

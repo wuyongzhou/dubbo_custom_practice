@@ -3,6 +3,7 @@ package com.study.dubbo.remoting.netty;
 import com.study.dubbo.remoting.Server;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -18,18 +19,25 @@ public class NettyServer implements Server {
 
     @Override
     public void start(URI uri) {
-        ServerBootstrap bootstrap = new ServerBootstrap();
-        bootstrap.group(boss, worker)
-                //指定所使用的nio传输channel
-                .channel(NioServerSocketChannel.class)
-                //指定要监听的地址
-                .localAddress(new InetSocketAddress(uri.getHost(), uri.getPort()))
-                //添加pipeline责任链handler
-                .childHandler(new ChannelInitializer<SocketChannel>() {
-                    @Override
-                    protected void initChannel(SocketChannel socketChannel) throws Exception {
-
-                    }
-                });
+        try {
+            ServerBootstrap bootstrap = new ServerBootstrap();
+            bootstrap.group(boss, worker)
+                    //指定所使用的nio传输channel
+                    .channel(NioServerSocketChannel.class)
+                    //指定要监听的地址
+                    .localAddress(new InetSocketAddress(uri.getHost(), uri.getPort()))
+                    //添加pipeline责任链handler
+                    .childHandler(new ChannelInitializer<SocketChannel>() {
+                        @Override
+                        protected void initChannel(SocketChannel socketChannel){
+                            //
+                            socketChannel.pipeline().addLast(new NettyHandler());
+                        }
+                    });
+            ChannelFuture future = bootstrap.bind().sync();
+            System.out.println("完成端口绑定和服务器启动");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

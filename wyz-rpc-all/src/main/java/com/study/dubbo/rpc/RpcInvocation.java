@@ -80,9 +80,13 @@ public class RpcInvocation implements Serializable {
 
     @Override
     public String toString() {
-        return "RpcInvocation [methodName=" + methodName + ", parameterTypes="
-                + Arrays.toString(parameterTypes) + ", arguments=" + Arrays.toString(arguments)
-                + "]";
+        return "RpcInvocation{" +
+                "id=" + id +
+                ", serviceName='" + serviceName + '\'' +
+                ", methodName='" + methodName + '\'' +
+                ", parameterTypes=" + Arrays.toString(parameterTypes) +
+                ", arguments=" + Arrays.toString(arguments) +
+                '}';
     }
 
     public final long incrementAndGet() {

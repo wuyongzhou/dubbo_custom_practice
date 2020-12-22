@@ -33,7 +33,7 @@ public class NettyServer implements Server {
                         @Override
                         protected void initChannel(SocketChannel socketChannel){
                             //处理网络信息编、解码
-                            socketChannel.pipeline().addLast(new NettyCodec(codec));
+                            socketChannel.pipeline().addLast(new NettyCodec(codec.createInstance()));
                             //处理远程服务调用
                             socketChannel.pipeline().addLast(new NettyHandler(handler));
                         }

@@ -22,8 +22,8 @@ public class Netty4TransporterTest {
             }
 
             @Override
-            public List<Object> decode(byte[] message) throws Exception {
-                System.out.println("解码器接收到的原始信息是："+new String(message));
+            public List<Object> decode(byte[] data) throws Exception {
+                System.out.println("解码器接收到的原始信息是："+new String(data));
                 List<Object> list=new ArrayList<>();
                 list.add("1");
                 list.add("2");

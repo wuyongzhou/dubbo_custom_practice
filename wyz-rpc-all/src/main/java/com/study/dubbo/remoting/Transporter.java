@@ -7,7 +7,7 @@ import java.net.URI;
  * 负责定义行为，但不包含具体实现
  */
 public interface Transporter {
-    Server start(URI uri);
+    Server start(URI uri, Codec codec, Handler handler);
 
     void connect(URI uri);
 }

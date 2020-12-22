@@ -37,7 +37,7 @@ public class WRPCPostProcessor implements ApplicationContextAware, Instantiation
             String transporterName = protocolConfig.getTransporter();
             Transporter transporter = SpiUtils.getServiceImpl(transporterName, Transporter.class);
             try {
-                Server server = transporter.start(new URI("xxx://127.0.0.1:8080/"));
+                Server server = transporter.start(new URI("xxx://127.0.0.1:8080/"),null,null);
 
             } catch (URISyntaxException e) {
                 e.printStackTrace();

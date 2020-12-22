@@ -1,5 +1,7 @@
 package com.study.dubbo.remoting.netty;
 
+import com.study.dubbo.remoting.Codec;
+import com.study.dubbo.remoting.Handler;
 import com.study.dubbo.remoting.Server;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -18,7 +20,7 @@ public class NettyServer implements Server {
     EventLoopGroup worker = new NioEventLoopGroup();
 
     @Override
-    public void start(URI uri) {
+    public void start(URI uri, Codec codec, Handler handler) {
         try {
             ServerBootstrap bootstrap = new ServerBootstrap();
             bootstrap.group(boss, worker)
@@ -30,8 +32,10 @@ public class NettyServer implements Server {
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel socketChannel){
-                            //
-                            socketChannel.pipeline().addLast(new NettyHandler());
+                            //处理网络信息编、解码
+                            socketChannel.pipeline().addLast(new NettyCodec(codec));
+                            //处理远程服务调用
+                            socketChannel.pipeline().addLast(new NettyHandler(handler));
                         }
                     });
             ChannelFuture future = bootstrap.bind().sync();

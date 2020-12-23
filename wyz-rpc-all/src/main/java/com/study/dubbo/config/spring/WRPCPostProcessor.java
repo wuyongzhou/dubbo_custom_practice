@@ -35,6 +35,7 @@ public class WRPCPostProcessor implements ApplicationContextAware, Instantiation
             //如何知道当前配置文件指定使用哪种网络框架、哪种网络协议
             ProtocolConfig protocolConfig = applicationContext.getBean(ProtocolConfig.class);
             String transporterName = protocolConfig.getTransporter();
+            //这里应该是要通过Protocol具体协议来启动网络服务，而不是直接通过网络框架
             Transporter transporter = SpiUtils.getServiceImpl(transporterName, Transporter.class);
             try {
                 Server server = transporter.start(new URI("xxx://127.0.0.1:8080/"),null,null);

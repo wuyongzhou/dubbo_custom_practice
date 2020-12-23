@@ -4,8 +4,6 @@ import com.study.dubbo.common.serialize.Serialization;
 import com.study.dubbo.common.tools.ByteUtil;
 import com.study.dubbo.remoting.Codec;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufAllocator;
-import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.buffer.Unpooled;
 
 import java.util.ArrayList;
@@ -17,7 +15,7 @@ public class WrpcCodec implements Codec {
     //协议头部长度
     public static final int HEADER_LEN = 6;
 
-    private ByteBuf tempMsg= ByteBufAllocator.DEFAULT.buffer();
+    private ByteBuf tempMsg= Unpooled.buffer();
 
     private Serialization serialization;
     private Class decodeType;
@@ -46,7 +44,7 @@ public class WrpcCodec implements Codec {
     @Override
     public List<Object> decode(byte[] data) throws Exception {
         List<Object> list=new ArrayList<>();
-        ByteBuf message= ByteBufAllocator.DEFAULT.buffer();
+        ByteBuf message= Unpooled.buffer();
         //1.判断tempMsg中是否残留数据，若有则合并
         if(tempMsg.isReadable()){
             message.writeBytes(tempMsg);

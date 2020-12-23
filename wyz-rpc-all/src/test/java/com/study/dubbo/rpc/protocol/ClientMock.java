@@ -27,8 +27,8 @@ public class ClientMock {
 
         //2. header 信息加上body数据
         ByteBuf byteBuf= Unpooled.buffer();
-        byteBuf.writeByte(0xdb);
-        byteBuf.writeByte(0xdd);
+        byteBuf.writeByte(0xda);
+        byteBuf.writeByte(0xbb);
         byteBuf.writeBytes(ByteUtil.int2bytes(bytes.length));
         byteBuf.writeBytes(bytes);
 

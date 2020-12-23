@@ -14,7 +14,7 @@ public class WrpcCodec implements Codec {
     public final static byte[] MAGIC = new byte[]{(byte) 0xda, (byte) 0xbb};
     //协议头部长度
     public static final int HEADER_LEN = 6;
-
+    //如果使用pool的ByteBuf，会有线程安全问题，因为会重用ByteBuf
     private ByteBuf tempMsg= Unpooled.buffer();
 
     private Serialization serialization;

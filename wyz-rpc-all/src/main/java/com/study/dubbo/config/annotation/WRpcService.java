@@ -11,4 +11,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Service
 public @interface WRpcService {
+
+    /**
+     * 如果有多个接口，需要自己指定一个
+     */
+    Class<?> interfaceClass() default void.class;
 }

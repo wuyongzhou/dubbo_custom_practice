@@ -19,6 +19,8 @@ public class WrpcServerHandler implements Handler {
     public void onReceive(WrpcChannel wrpcChannel, Object message) throws Exception {
         RpcInvocation rpcInvocation= (RpcInvocation) message;
         System.out.println("收到rpcInvocation信息："+rpcInvocation);
+        Object result = invoker.invoke(rpcInvocation);
+        System.out.println("得到结果："+result);
     }
 
     @Override

@@ -4,6 +4,9 @@ import com.study.dubbo.rpc.Invoker;
 
 import java.net.URI;
 
+/**
+ * 协议
+ */
 public interface Protocol {
 
     /**

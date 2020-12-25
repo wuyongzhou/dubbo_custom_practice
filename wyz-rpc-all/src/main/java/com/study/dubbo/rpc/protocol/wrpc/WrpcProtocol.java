@@ -13,6 +13,9 @@ import com.study.dubbo.rpc.protocol.wrpc.handler.WrpcServerHandler;
 
 import java.net.URI;
 
+/**
+ * 协议的具体实现，通过该类启动Transporter网络框架对外提供网络服务
+ */
 public class WrpcProtocol implements Protocol {
     @Override
     public void export(URI exportUri, Invoker invoker) {

@@ -14,7 +14,7 @@ public class WrpcProtocolTransporterTest {
         WrpcCodec wrpcCodec = new WrpcCodec();
         wrpcCodec.setDecodeType(RpcInvocation.class);
         wrpcCodec.setSerialization(new JsonSerialization());
-        WrpcServerHandler wrpcServerHandler = new WrpcServerHandler();
+        WrpcServerHandler wrpcServerHandler = new WrpcServerHandler(null);
         new Netty4Transporter().start(new URI("WRPC://127.0.0.1:8080/"),wrpcCodec,wrpcServerHandler);
     }
 }

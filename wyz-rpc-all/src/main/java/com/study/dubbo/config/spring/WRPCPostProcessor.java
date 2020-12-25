@@ -32,7 +32,7 @@ public class WRPCPostProcessor implements ApplicationContextAware, Instantiation
         if(bean.getClass().isAnnotationPresent(WRpcService.class)){
             System.out.println("启动网络服务，接受请求");
 
-            //如何知道当前配置文件指定使用哪种网络框架、哪种网络协议
+            /*//如何知道当前配置文件指定使用哪种网络框架、哪种网络协议
             ProtocolConfig protocolConfig = applicationContext.getBean(ProtocolConfig.class);
             String transporterName = protocolConfig.getTransporter();
             //这里应该是要通过Protocol具体协议来启动网络服务，而不是直接通过网络框架
@@ -42,7 +42,7 @@ public class WRPCPostProcessor implements ApplicationContextAware, Instantiation
 
             } catch (URISyntaxException e) {
                 e.printStackTrace();
-            }
+            }*/
 
         }
 

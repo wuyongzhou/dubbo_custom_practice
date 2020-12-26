@@ -24,7 +24,7 @@ public class WrpcProtocol implements Protocol {
         String serializationName = URIUtils.getParam(exportUri, "serialization");
         Serialization serialization = SpiUtils.getServiceImpl(serializationName, Serialization.class);
         wrpcCodec.setSerialization(serialization);
-        WrpcServerHandler wrpcServerHandler = new WrpcServerHandler(invoker);
+        WrpcServerHandler wrpcServerHandler = new WrpcServerHandler(invoker,serialization);
         String transporterName = URIUtils.getParam(exportUri, "transporter");
         Transporter transporter = SpiUtils.getServiceImpl(transporterName, Transporter.class);
         transporter.start(exportUri,wrpcCodec,wrpcServerHandler);

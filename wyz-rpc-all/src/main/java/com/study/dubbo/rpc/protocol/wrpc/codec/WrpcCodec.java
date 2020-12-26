@@ -98,6 +98,7 @@ public class WrpcCodec implements Codec {
             //至少满足一个完整的数据长度，有一个添加一个
             byte[] body = new byte[bodyLength];
             message.readBytes(body);
+            //反序列化为java对象
             Object o = getSerialization().deserialize(body, decodeType);
             list.add(o);
         }

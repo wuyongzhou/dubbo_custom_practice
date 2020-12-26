@@ -30,6 +30,7 @@ public class WprcBootstrap {
                 //端口
                 stringBuilder.append(protocolConfig.getPort()+"/");
                 //service全类名
+                //【 照目前看来，这个属性并不影响客户端调用，主要还是根据 IP+端口 以及自定义协议头，就可以调用到具体服务 】
                 stringBuilder.append(serviceConfig.getService().getName()+"?");
                 //参数
                 stringBuilder.append("transporter="+protocolConfig.getTransporter());

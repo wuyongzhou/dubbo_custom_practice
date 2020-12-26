@@ -34,7 +34,7 @@ public class ClientMock {
 
         //3. 模拟请求发送
         SocketChannel socketChannel=SocketChannel.open();
-        socketChannel.connect(new InetSocketAddress("127.0.0.1",8080));
+        socketChannel.connect(new InetSocketAddress("127.0.0.1",10088));
         //写出
         socketChannel.write(ByteBuffer.wrap(byteBuf.array()));
         //读取

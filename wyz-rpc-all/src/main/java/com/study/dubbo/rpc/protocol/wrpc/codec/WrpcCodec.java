@@ -9,6 +9,9 @@ import io.netty.buffer.Unpooled;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 真正处理编解码的类
+ */
 public class WrpcCodec implements Codec {
     //协议头部特殊标识符  0xdabb
     public final static byte[] MAGIC = new byte[]{(byte) 0xda, (byte) 0xbb};
@@ -36,11 +39,32 @@ public class WrpcCodec implements Codec {
         this.decodeType = decodeType;
     }
 
+    /**
+     * 编码
+     * @param msg 该参数由于自定义channel规定，一定是byte数组类型
+     * @return
+     * @throws Exception
+     */
     @Override
     public byte[] encode(Object msg) throws Exception {
-        return new byte[0];
+        byte[] bodyBytes= (byte[]) msg;
+        //1. header 信息加上body数据
+        ByteBuf byteBuf= Unpooled.buffer();
+        byteBuf.writeByte(0xda);
+        byteBuf.writeByte(0xbb);
+        byteBuf.writeBytes(ByteUtil.int2bytes(bodyBytes.length));
+        byteBuf.writeBytes(bodyBytes);
+
+        //2. 返回完整的result数据
+        return byteBuf.array();
     }
 
+    /**
+     * 解码
+     * @param data
+     * @return
+     * @throws Exception
+     */
     @Override
     public List<Object> decode(byte[] data) throws Exception {
         List<Object> list=new ArrayList<>();

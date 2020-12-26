@@ -13,6 +13,6 @@ public class NettyChannel implements WrpcChannel {
 
     @Override
     public void send(byte[] message) {
-
+        channel.writeAndFlush(message);
     }
 }

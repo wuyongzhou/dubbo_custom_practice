@@ -2,8 +2,10 @@ package com.study.dubbo.remoting.netty;
 
 import com.study.dubbo.remoting.Codec;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPromise;
 
 import java.util.List;
 
@@ -42,7 +44,16 @@ public class NettyCodec extends ChannelDuplexHandler {
 
     }
 
-
-
-
+    /**
+     * 编码，把byte数组数据转为ByteBuf返回响应
+     * @param ctx
+     * @param msg
+     * @param promise
+     * @throws Exception
+     */
+    @Override
+    public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
+        byte[] bytes = codec.encode(msg);
+        super.write(ctx, Unpooled.wrappedBuffer(bytes), promise);
+    }
 }

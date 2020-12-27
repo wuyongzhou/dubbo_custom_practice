@@ -57,6 +57,8 @@ public class WrpcServerHandler implements Handler {
          *  handler就是处理接收/写出的逻辑，就好像onReceive方法的message参数，在方法中就可以确定是一个RpcInvocation对象了。
          *  这是因为在上一个Handler，也就是WrpcCodec对象中将数组数据转为了java对象，这是接收的逻辑。
          *  同理，写出也应该遵循一样的风格，在WrpcCodec对象中才要将java对象转为数组数据，这里由于自定义channel的send方法需要byte数组，先这样做，对于效果没有影响。
+         *
+         *  这里channel调用send方法后，会触发NettyHandler的write方法
          */
         byte[] bodyBytes = serialization.serialize(message);
         wrpcChannel.send(bodyBytes);

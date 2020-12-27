@@ -2,7 +2,9 @@ package com.study.dubbo.config.util;
 
 import com.study.dubbo.common.tools.SpiUtils;
 import com.study.dubbo.config.ProtocolConfig;
+import com.study.dubbo.config.RegistryConfig;
 import com.study.dubbo.config.ServiceConfig;
+import com.study.dubbo.registry.Registry;
 import com.study.dubbo.rpc.Invoker;
 import com.study.dubbo.rpc.protocol.Protocol;
 import com.study.dubbo.rpc.proxy.ProxyFactory;
@@ -46,6 +48,16 @@ public class WprcBootstrap {
                 //3. 真正的暴露发布服务
                 System.out.println("开始暴露网络服务.....");
                 protocol.export(exportUri,invoker);
+
+                //4. 注册服务到注册中心，要考虑会有多个的情况，但是并不需要
+                System.out.println("开始把服务注册到注册中心");
+                for (RegistryConfig registryConfig : serviceConfig.getRegistryConfigs()) {
+                    URI registryUri=new URI(registryConfig.getAddress());
+                    Registry registry = SpiUtils.getServiceImpl(registryUri.getScheme(), Registry.class);
+                    registry.init(registryUri);
+                    registry.registerService(exportUri);
+                }
+
             }
         }catch (Exception e){
             e.printStackTrace();

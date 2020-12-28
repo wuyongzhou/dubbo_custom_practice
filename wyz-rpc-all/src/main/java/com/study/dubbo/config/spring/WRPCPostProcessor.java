@@ -1,20 +1,16 @@
 package com.study.dubbo.config.spring;
 
-import com.study.dubbo.common.tools.SpiUtils;
 import com.study.dubbo.config.ProtocolConfig;
 import com.study.dubbo.config.RegistryConfig;
 import com.study.dubbo.config.ServiceConfig;
 import com.study.dubbo.config.annotation.WRpcService;
 import com.study.dubbo.config.util.WprcBootstrap;
-import com.study.dubbo.remoting.Server;
-import com.study.dubbo.remoting.Transporter;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.lang.reflect.Field;
 
 /**
  * 针对自定义注解的发现与解析
@@ -49,10 +45,13 @@ public class WRPCPostProcessor implements ApplicationContextAware, Instantiation
 
         }
 
-        /*if(bean.getClass().equals(RegistryConfig.class)){
-            System.out.println("证明通过代码的方式可以成功将对象放入Spring容器中管理");
-            System.out.println("当前配置的注册中心地址为："+((RegistryConfig)bean).getAddress());
-        }*/
+        //2.服务消费者，需要遍历
+        for (Field field : bean.getClass().getFields()) {
+
+        }
+
+
+
         return null;
     }
 }

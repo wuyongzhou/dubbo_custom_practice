@@ -1,8 +1,10 @@
 package com.study.dubbo.config.spring;
 
 import com.study.dubbo.config.ProtocolConfig;
+import com.study.dubbo.config.ReferenceConfig;
 import com.study.dubbo.config.RegistryConfig;
 import com.study.dubbo.config.ServiceConfig;
+import com.study.dubbo.config.annotation.WRpcReference;
 import com.study.dubbo.config.annotation.WRpcService;
 import com.study.dubbo.config.util.WprcBootstrap;
 import org.springframework.beans.BeansException;
@@ -46,12 +48,28 @@ public class WRPCPostProcessor implements ApplicationContextAware, Instantiation
         }
 
         //2.服务消费者，需要遍历
-        for (Field field : bean.getClass().getFields()) {
+        for (Field field : bean.getClass().getDeclaredFields()) {
+            try {
+                //只对修饰了消费者注解的属性操作
+                if(!field.isAnnotationPresent(WRpcReference.class)){
+                    continue;
+                }
+                ReferenceConfig referenceConfig=new ReferenceConfig();
+                referenceConfig.addProtocolConfig(applicationContext.getBean(ProtocolConfig.class));
+                referenceConfig.addRegistryConfig(applicationContext.getBean(RegistryConfig.class));
+                referenceConfig.setService(field.getType());
 
+                Object referenceBean = WprcBootstrap.getReferenceBean(referenceConfig);
+                //私有属性
+                if(!field.isAccessible()){
+                    field.setAccessible(true);
+                }
+                field.set(bean,referenceBean);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
 
-
-
-        return null;
+        return bean;
     }
 }

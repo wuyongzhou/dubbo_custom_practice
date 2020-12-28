@@ -10,7 +10,7 @@ import org.springframework.context.annotation.PropertySource;
 
 @Configuration
 @ComponentScan("com.study.dubbo")
-@EnableDubbo(scanBasePackages = "com.study.dubbo")
+//@EnableDubbo(scanBasePackages = "com.study.dubbo")
 //@PropertySource("classpath:/dubbo.properties")
 @PropertySource("classpath:/trpc.properties")
 @EnableWRPC
@@ -20,7 +20,7 @@ public class OrderApplication {
         context.start();
 
         OrderService orderService = context.getBean(OrderService.class);
-        orderService.create("测试一下啦---");
+        orderService.create("我要淦亮亮");
 
         /*final CyclicBarrier cyclicBarrier = new CyclicBarrier(1);
         for (int i = 0; i < 1; i++) {

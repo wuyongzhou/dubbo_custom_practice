@@ -11,6 +11,7 @@ import com.study.dubbo.registry.Registry;
 import com.study.dubbo.rpc.Invoker;
 import com.study.dubbo.rpc.RpcInvocation;
 import com.study.dubbo.rpc.protocol.Protocol;
+import com.study.dubbo.rpc.protocol.wrpc.WrpcProtocol;
 import com.study.dubbo.rpc.proxy.ProxyFactory;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -31,10 +32,14 @@ public class WprcBootstrap {
     public static Object getReferenceBean(ReferenceConfig referenceConfig){
         Object referenceBean=null;
         try {
-            //通过protocol启动Netty客户端连接到服务端并获得invoker对象
+            //服务提供者暴露的uri地址： WrpcProtocol://127.0.0.1:10088/com.study.dubbo.sms.api.SmsService?transporter=Netty4Transporter&serialization=JsonSerialization
 
+            //通过protocol启动Netty客户端连接到服务端并获得invoker对象
+            //目前测试，暂时写死
+            WrpcProtocol wrpcProtocol=new WrpcProtocol();
             //这里的invoker对象其实是被代理对象
-            Invoker invoker=null;
+            Invoker invoker = wrpcProtocol.refer(new URI("WrpcProtocol://127.0.0.1:10088/com.study.dubbo.sms.api.SmsService?transporter=Netty4Transporter&serialization=JsonSerialization"));
+
             /**
              * 创建返回的代理对象实现了使用 @WRpcReference 注解修饰属性的接口，这样子从外部看来就是该接口的实现类，可以注入其中。
              * 但其作用只是拼装一些远程调用所需的参数，真正执行是通过invoker对象发起远程调用。

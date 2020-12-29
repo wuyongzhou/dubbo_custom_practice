@@ -15,6 +15,7 @@ public class OrderServiceImpl implements OrderService {
 
     public void create(String orderContent) {
         System.out.println("来了一个订单......"+orderContent);
-        smsService.send("13902200634",orderContent);
+        Object result = smsService.send("13902200634", orderContent);
+        System.out.println("消费者收到的结果："+result.toString());
     }
 }

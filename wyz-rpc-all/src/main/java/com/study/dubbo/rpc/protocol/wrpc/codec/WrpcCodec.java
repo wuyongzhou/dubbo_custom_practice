@@ -42,6 +42,8 @@ public class WrpcCodec implements Codec {
 
     /**
      * 编码
+     * 对于客户端 ---- RpcInvocation
+     * 对于服务端 ---- Response
      * @param msg 该参数由于自定义channel规定，一定是byte数组类型
      * @return
      * @throws Exception
@@ -62,6 +64,8 @@ public class WrpcCodec implements Codec {
 
     /**
      * 解码
+     * 对于客户端 ---- Response
+     * 对于服务端 ---- RpcInvocation
      * @param data
      * @return
      * @throws Exception

@@ -50,8 +50,8 @@ public class WrpcProtocol implements Protocol {
         Transporter transporter = SpiUtils.getServiceImpl(transporterName, Transporter.class);
         Client client = transporter.connect(consumerUri, wrpcCodec, wrpcClientHandler);
 
-        //4.创建
-        WrpcClientInvoker wrpcClientInvoker=new WrpcClientInvoker();
+        //4.创建Invoker实现类，也就是被代理类
+        WrpcClientInvoker wrpcClientInvoker=new WrpcClientInvoker(client,serialization);
 
         return wrpcClientInvoker;
     }

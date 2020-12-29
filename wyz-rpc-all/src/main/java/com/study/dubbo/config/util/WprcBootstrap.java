@@ -31,6 +31,8 @@ public class WprcBootstrap {
     public static Object getReferenceBean(ReferenceConfig referenceConfig){
         Object referenceBean=null;
         try {
+            //通过protocol启动Netty客户端连接到服务端并获得invoker对象
+
             //这里的invoker对象其实是被代理对象
             Invoker invoker=null;
             /**

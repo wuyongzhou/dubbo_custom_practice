@@ -10,7 +10,7 @@ import com.study.dubbo.rpc.RpcInvocation;
 import java.net.URI;
 
 /**
- * 真正执行业务处理的类
+ * 服务提供者真正执行业务处理的类
  */
 public class WrpcServerHandler implements Handler {
 
@@ -22,6 +22,12 @@ public class WrpcServerHandler implements Handler {
         this.serialization=serialization;
     }
 
+    /**
+     * 收到客户端请求
+     * @param wrpcChannel
+     * @param message
+     * @throws Exception
+     */
     @Override
     public void onReceive(WrpcChannel wrpcChannel, Object message) throws Exception {
         Response response=new Response();
@@ -50,6 +56,12 @@ public class WrpcServerHandler implements Handler {
         this.onWrite(wrpcChannel,response);
     }
 
+    /**
+     * 响应请求客户端请求
+     * @param wrpcChannel
+     * @param message
+     * @throws Exception
+     */
     @Override
     public void onWrite(WrpcChannel wrpcChannel, Object message) throws Exception {
         /**

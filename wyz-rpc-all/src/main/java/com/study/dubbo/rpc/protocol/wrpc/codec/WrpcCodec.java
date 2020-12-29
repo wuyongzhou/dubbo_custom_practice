@@ -11,6 +11,7 @@ import java.util.List;
 
 /**
  * 真正处理编解码的类
+ * 对于消费者和提供者都需要使用
  */
 public class WrpcCodec implements Codec {
     //协议头部特殊标识符  0xdabb

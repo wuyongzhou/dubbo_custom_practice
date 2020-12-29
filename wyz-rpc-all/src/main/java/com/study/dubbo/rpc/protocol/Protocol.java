@@ -15,4 +15,7 @@ public interface Protocol {
      * @param invoker 调用具体实现类的代理对象
      */
     void export(URI exportUri, Invoker invoker);
+
+
+    Invoker refer(URI consumerUri);
 }

@@ -10,8 +10,9 @@ public class ProxyFactory {
 
     /**
      * 获取指定接口的实现类，但该类的实现方法由 invoker 具体执行
-     * @param invoker
-     * @param interfaces
+     * 可以理解为返回一个代理对象，指向被代理类 invoker
+     * @param invoker 被代理类
+     * @param interfaces 接口，用于实现并作为字类注入
      * @return
      */
     public static Object getProxy(Invoker invoker,Class<?>[] interfaces){

@@ -1,9 +1,6 @@
 package com.study.dubbo.remoting.netty;
 
-import com.study.dubbo.remoting.Codec;
-import com.study.dubbo.remoting.Handler;
-import com.study.dubbo.remoting.Server;
-import com.study.dubbo.remoting.Transporter;
+import com.study.dubbo.remoting.*;
 
 import java.net.URI;
 
@@ -16,7 +13,9 @@ public class Netty4Transporter implements Transporter {
     }
 
     @Override
-    public void connect(URI uri) {
-
+    public Client connect(URI uri,Codec codec, Handler handler) {
+        Client client=new NettyClient();
+        client.connect(uri,codec,handler);
+        return client;
     }
 }

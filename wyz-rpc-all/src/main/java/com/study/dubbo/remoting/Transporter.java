@@ -9,5 +9,5 @@ import java.net.URI;
 public interface Transporter {
     Server start(URI uri, Codec codec, Handler handler);
 
-    void connect(URI uri);
+    Client connect(URI uri,Codec codec, Handler handler);
 }

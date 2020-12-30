@@ -7,25 +7,31 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.JedisPubSub;
 
 import java.net.URI;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class RedisRegistry implements Registry {
 
     private String prefix="wrpc-";
     //second
     private int beatTimeout=15;
-    private URI address;
     private JedisPool jedisPool;
-
-    //存储所有注册服务的URI，便于定期进行心跳设置
-    private List<URI> serviceUriList;
     //schedule线程池
     private ThreadPoolTaskScheduler executor;
+
+    //提供者 --- 存储所有注册服务的URI，便于定期进行心跳设置
+    private List<URI> serviceUriList;
+
+    //消费者
+    private JedisPubSub jedisPubSub;
+    private Map<String, Set<URI>> localCache;
+    private Map<String,NotifyListener>listenerMap;
+
 
     @Override
     public void registerService(URI exportUri) {
@@ -46,12 +52,35 @@ public class RedisRegistry implements Registry {
 
     @Override
     public void subscribeService(String serviceName, NotifyListener notifyListener) {
-
+        Jedis jedis=null;
+        try {
+            //1.本地缓存，当该服务第一次被订阅时才会执行
+            if(localCache.get(serviceName)==null){
+                localCache.putIfAbsent(serviceName,new HashSet<>());
+                listenerMap.putIfAbsent(serviceName,notifyListener);
+                //2.模糊获取redis中指定服务的uri信息
+                jedis = jedisPool.getResource();
+                // wrpc-WrpcProtocol://127.0.0.1:10088/com.study.dubbo.sms.api.SmsService?transporter=Netty4Transporter&serialization=JsonSerialization
+                Set<String> serviceInstances = jedis.keys(prefix+"*" + serviceName + "?*");
+                //3.遍历每个服务实例信息，加入到该服务对应的value中
+                for(String instances:serviceInstances){
+                    URI instanceUri=new URI(instances.replace(prefix, ""));
+                    localCache.get(serviceName).add(instanceUri);
+                }
+                //4.最后通知发起订阅的调用者，当前共有多少个服务实例
+                notifyListener.notify(localCache.get(serviceName));
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            if(jedis!=null){
+                jedis.close();
+            }
+        }
     }
 
     @Override
     public void init(URI address) {
-        this.address=address;
         //redis连接池
         JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
         String host=address.getHost();
@@ -61,6 +90,8 @@ public class RedisRegistry implements Registry {
         jedisPool=new JedisPool(jedisPoolConfig, host, port, Integer.parseInt(timeout),password);
 
         serviceUriList=new ArrayList<>();
+        localCache=new ConcurrentHashMap<>();
+        listenerMap=new ConcurrentHashMap<>();
 
         executor=new ThreadPoolTaskScheduler();
         executor.initialize();
@@ -85,5 +116,62 @@ public class RedisRegistry implements Registry {
                 }
             }
         }, Instant.ofEpochMilli(System.currentTimeMillis() + 3000), Duration.ofSeconds(5));
+
+        /**
+         * 监听服务变动，需要手动修改配置文件开启 - redis.conf  notify-keyspace-events KE$xg
+         * 根据配置，onPMessage的message会返回不同事件的通知
+         */
+        executor.execute(()->{
+            Jedis jedis=null;
+            try {
+                //事件具体执行类
+                jedisPubSub = new JedisPubSub() {
+                    @Override
+                    public void onPSubscribe(String pattern, int subscribedChannels) {
+                        System.out.println("注册中心开始监听:" + pattern);
+                    }
+
+                    @Override
+                    public void onPMessage(String pattern, String channel, String message) {
+                        try {
+                            //replace后：WrpcProtocol://127.0.0.1:10088/com.study.dubbo.sms.api.SmsService?transporter=Netty4Transporter&serialization=JsonSerialization
+                            URI serviceURI = new URI(channel.replace("__keyspace@0__:"+prefix, ""));
+                            if ("set".equals(message)) {
+                                // 新增
+                                Set<URI> uris = localCache.get(URIUtils.getService(serviceURI));
+                                if (uris != null) {
+                                    uris.add(serviceURI);
+                                }
+                            }
+                            if ("expired".equals(message)) {
+                                // 过期
+                                Set<URI> uris = localCache.get(URIUtils.getService(serviceURI));
+                                if (uris != null) {
+                                    uris.remove(serviceURI);
+                                }
+                            }
+                            if ("set".equals(message) || "expired".equals(message)) {
+                                System.out.println("服务实例有变化，开始刷新---------");
+                                NotifyListener notifyListener = listenerMap.get(URIUtils.getService(serviceURI));
+                                if (notifyListener != null) {
+                                    notifyListener.notify(localCache.get(URIUtils.getService(serviceURI)));
+                                }
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                };
+                jedis = jedisPool.getResource();
+                //监听redis中【wrpc-*】的事件通知
+                jedis.psubscribe(jedisPubSub, "__keyspace@0__:"+prefix+"*");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }finally {
+                if(jedis!=null){
+                    jedis.close();
+                }
+            }
+        });
     }
 }

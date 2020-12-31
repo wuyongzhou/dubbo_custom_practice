@@ -21,11 +21,13 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ClusterInvoker implements Invoker {
 
     private ReferenceConfig referenceConfig;
+    private LoadBalance loadBalance;
     //保存服务实例
     private Map<URI,Invoker> invokerMap=new ConcurrentHashMap<>();
 
     public ClusterInvoker(ReferenceConfig referenceConfig) throws URISyntaxException {
         this.referenceConfig=referenceConfig;
+        this.loadBalance = SpiUtils.getServiceImpl(referenceConfig.getLoadbalance(), LoadBalance.class);
         for (RegistryConfig registryConfig:referenceConfig.getRegistryConfigs()){
             URI registryUri=new URI(registryConfig.getAddress());
             Registry registry = SpiUtils.getServiceImpl(registryUri.getScheme(), Registry.class);
@@ -71,13 +73,7 @@ public class ClusterInvoker implements Invoker {
 
     @Override
     public Object invoke(RpcInvocation rpcInvocation) throws Exception {
-        //这里偷懒，没用配置文件+SPI机制的方式动态获取负载均衡的实现，目前暂时也没想到怎么做。。。
-        /*LoadBalance loadBalance=new RandomLoadBalance();
-        Invoker invoker = loadBalance.balance(invokerMap);
-        return invoker.invoke(rpcInvocation);*/
-
         //注解中属性指定+SPI机制
-        LoadBalance loadBalance = SpiUtils.getServiceImpl(referenceConfig.getLoadbalance(), LoadBalance.class);
         Invoker invoker = loadBalance.balance(invokerMap);
         return invoker.invoke(rpcInvocation);
     }

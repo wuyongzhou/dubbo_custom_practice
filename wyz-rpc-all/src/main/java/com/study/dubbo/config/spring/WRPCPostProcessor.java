@@ -54,10 +54,12 @@ public class WRPCPostProcessor implements ApplicationContextAware, Instantiation
                 if(!field.isAnnotationPresent(WRpcReference.class)){
                     continue;
                 }
+                WRpcReference annotation = bean.getClass().getAnnotation(WRpcReference.class);
                 ReferenceConfig referenceConfig=new ReferenceConfig();
                 referenceConfig.addProtocolConfig(applicationContext.getBean(ProtocolConfig.class));
                 referenceConfig.addRegistryConfig(applicationContext.getBean(RegistryConfig.class));
                 referenceConfig.setService(field.getType());
+                referenceConfig.setLoadbalance(annotation.loadBalance());
 
                 Object referenceBean = WprcBootstrap.getReferenceBean(referenceConfig);
                 //私有属性

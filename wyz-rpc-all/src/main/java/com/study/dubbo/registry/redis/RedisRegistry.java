@@ -99,7 +99,10 @@ public class RedisRegistry implements Registry {
         executor.setWaitForTasksToCompleteOnShutdown(true);//等待任务完成后关闭
         executor.setAwaitTerminationSeconds(60);//最多等待 60s
 
-        //对已注册的服务进行心跳设置，防止超过预设的存活时间，在当前时间3秒后初次执行，之后每间隔5秒执行一次
+        /**
+         * 服务提供者关注的定时任务
+         * 对已注册的服务进行心跳设置，防止超过预设的存活时间，在当前时间3秒后初次执行，之后每间隔5秒执行一次
+         */
         executor.scheduleWithFixedDelay(()->{
             Jedis jedis=null;
             try {
@@ -118,6 +121,7 @@ public class RedisRegistry implements Registry {
         }, Instant.ofEpochMilli(System.currentTimeMillis() + 3000), Duration.ofSeconds(5));
 
         /**
+         * 服务消费者关心的定时任务
          * 监听服务变动，需要手动修改配置文件开启 - redis.conf  notify-keyspace-events KE$xg
          * 根据配置，onPMessage的message会返回不同事件的通知
          */
@@ -132,7 +136,7 @@ public class RedisRegistry implements Registry {
                     }
 
                     /**
-                     * 事讲回调方法
+                     * 事件回调方法
                      * @param pattern
                      * @param channel
                      * @param message 事件的具体类型

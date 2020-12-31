@@ -34,10 +34,8 @@ public class WprcBootstrap {
         Object referenceBean=null;
         try {
             //服务提供者暴露的uri地址： WrpcProtocol://127.0.0.1:10088/com.study.dubbo.sms.api.SmsService?transporter=Netty4Transporter&serialization=JsonSerialization
-
             //通过集群的方式获取具体服务的所有实例
             Invoker invoker=new ClusterInvoker(referenceConfig);
-
             /**
              * 创建返回的代理对象实现了使用 @WRpcReference 注解修饰属性的接口，这样子从外部看来就是该接口的实现类，可以注入其中。
              * 但其作用只是拼装一些远程调用所需的参数，真正执行是通过invoker对象发起远程调用。

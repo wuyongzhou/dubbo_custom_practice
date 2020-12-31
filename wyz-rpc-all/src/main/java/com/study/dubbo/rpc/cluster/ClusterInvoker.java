@@ -33,6 +33,7 @@ public class ClusterInvoker implements Invoker {
             Registry registry = SpiUtils.getServiceImpl(registryUri.getScheme(), Registry.class);
             registry.init(registryUri);
             registry.subscribeService(referenceConfig.getService().getName(),(uris)->{
+                System.out.println("更新前的服务实例信息---------："+invokerMap);
                 /**
                  * uris为N个，协议、ip、端口会有差异，但肯定是同一个服务，例子如下：
                  * WrpcProtocol://127.0.0.1:10088/com.study.dubbo.sms.api.SmsService?transporter=Netty4Transporter&serialization=JsonSerialization
@@ -58,7 +59,7 @@ public class ClusterInvoker implements Invoker {
                         Protocol protocol = SpiUtils.getServiceImpl(uri.getScheme(), Protocol.class);
                         //这里的invoker代表客户端长连接
                         Invoker invoker = protocol.refer(uri);
-                        invokerMap.put(uri,invoker);
+                        invokerMap.putIfAbsent(uri,invoker);
                     }
                 }
                 System.out.println("更新后的服务实例信息---------："+invokerMap);

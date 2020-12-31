@@ -35,7 +35,7 @@ public class WprcBootstrap {
             //服务提供者暴露的uri地址： WrpcProtocol://127.0.0.1:10088/com.study.dubbo.sms.api.SmsService?transporter=Netty4Transporter&serialization=JsonSerialization
 
             //通过protocol启动Netty客户端连接到服务端并获得invoker对象
-            //目前测试，暂时写死
+            //目前测试，暂时写死单机服务实例
             WrpcProtocol wrpcProtocol=new WrpcProtocol();
             //这里的invoker对象其实是被代理对象
             Invoker invoker = wrpcProtocol.refer(new URI("WrpcProtocol://127.0.0.1:10088/com.study.dubbo.sms.api.SmsService?transporter=Netty4Transporter&serialization=JsonSerialization"));
@@ -79,11 +79,11 @@ public class WprcBootstrap {
 
                 Protocol protocol = SpiUtils.getServiceImpl(protocolConfig.getName(), Protocol.class);
 
-                //3. 真正的暴露发布服务
+                //3. 真正的暴露发布服务 -- 多个service 用同一个端口 TODO 思考点：一个系统，多个service需要暴露
                 System.out.println("开始暴露网络服务.....");
                 protocol.export(exportUri,invoker);
 
-                //4. 注册服务到注册中心，要考虑会有多个的情况，但是并不需要
+                //4. 注册服务到注册中心，要考虑会有多个的情况，但是并不需要，一般来说只会有一个注册中心
                 System.out.println("开始把服务注册到注册中心");
                 for (RegistryConfig registryConfig : serviceConfig.getRegistryConfigs()) {
                     URI registryUri=new URI(registryConfig.getAddress());

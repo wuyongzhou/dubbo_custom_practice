@@ -131,6 +131,12 @@ public class RedisRegistry implements Registry {
                         System.out.println("注册中心开始监听:" + pattern);
                     }
 
+                    /**
+                     * 事讲回调方法
+                     * @param pattern
+                     * @param channel
+                     * @param message 事件的具体类型
+                     */
                     @Override
                     public void onPMessage(String pattern, String channel, String message) {
                         try {
